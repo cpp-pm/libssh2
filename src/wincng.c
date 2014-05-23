@@ -38,8 +38,6 @@
 
 #include "libssh2_priv.h"
 
-#ifdef LIBSSH2_WINCNG /* compile only if we build with wincng */
-
 #include <math.h>
 
 #ifdef HAVE_STDLIB_H
@@ -1781,5 +1779,3 @@ void _libssh2_init_aes_ctr(void)
     /* no implementation */
     (void)0;
 }
-
-#endif /* LIBSSH2_WINCNG */

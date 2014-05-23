@@ -41,14 +41,16 @@ int main(int argc, char *argv[])
     LIBSSH2_CHANNEL *channel;
 #ifdef WIN32
     WSADATA wsadata;
-
-    WSAStartup(MAKEWORD(2,0), &wsadata);
 #endif
     const char *pubkeyfile="etc/user.pub";
     const char *privkeyfile="etc/user";
     const char *username="username";
     const char *password="password";
     int ec = 1;
+
+#ifdef WIN32
+    WSAStartup(MAKEWORD(2,0), &wsadata);
+#endif
 
     (void)argc;
     (void)argv;
