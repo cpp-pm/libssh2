@@ -22,7 +22,7 @@ VMSFILES = vms/libssh2_make_example.dcl vms/libssh2_make_help.dcl	\
 vms/libssh2_make_kit.dcl vms/libssh2_make_lib.dcl vms/man2help.c	\
 vms/readme.vms vms/libssh2_config.h
 
-WIN32FILES = win32/libssh2.rc
+WIN32FILES = win32/Makefile.Watcom win32/libssh2.rc
 
 EXTRA_DIST = $(WIN32FILES) buildconf $(NETWAREFILES) get_ver.awk HACKING \
  maketgz NMakefile TODO RELEASE-NOTES libssh2.pc.in $(VMSFILES) config.rpath
@@ -32,7 +32,7 @@ ACLOCAL_AMFLAGS = -I m4
 .PHONY: ChangeLog
 ChangeLog:
 	echo "see NEWS" > ./ChangeLog
-DISTCLEANFILES += ChangeLog
+DISTCLEANFILES = ChangeLog
 
 dist-hook:
 	rm -rf $(top_builddir)/tests/log
