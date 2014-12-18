@@ -27,26 +27,23 @@ environment:
   matrix:
     - GENERATOR: "Visual Studio 12"
 
-    - GENERATOR: "Visual Studio 12 Win64"
-
     - GENERATOR: "Visual Studio 11"
-
-    - GENERATOR: "Visual Studio 11 Win64"
 
     - GENERATOR: "Visual Studio 10"
 
-    - GENERATOR: "Visual Studio 10 Win64"
-
     - GENERATOR: "Visual Studio 9 2008"
 
-    - GENERATOR: "Visual Studio 9 2008 Win64"
+platforms:
+  - x86
+  - x64
 
 configuration:
   - Debug
   - Release
 
 build_script:
-  - cmake "-G%GENERATOR%" -H. -B_builds
+  - ps: if($env:PLATFORM -eq x64) { $env:CMAKE_GEN_SUFFIX=" Win64" }
+  - cmake "-G%GENERATOR%%CMAKE_GEN_SUFFIX%" -H. -B_builds
   - cmake --build _builds --config "%CONFIGURATION%"
 
 test_script:
