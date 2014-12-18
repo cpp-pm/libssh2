@@ -47,8 +47,8 @@ configuration:
 
 build_script:
   - cmake "-G%GENERATOR%" -H. -B_builds
-  - cmake --build _builds
+  - cmake --build _builds --config "%CONFIGURATION%"
 
 test_script:
   - ps: cd _builds
-#  - ctest -VV
+#  - ctest -VV -C "%CONFIGURATION%"
