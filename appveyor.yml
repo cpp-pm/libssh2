@@ -42,7 +42,7 @@ configuration:
   - Release
 
 build_script:
-  - ps: if($env:PLATFORM -eq x64) { $env:CMAKE_GEN_SUFFIX=" Win64" }
+  - ps: if($env:PLATFORM -eq "x64") { $env:CMAKE_GEN_SUFFIX=" Win64" }
   - cmake "-G%GENERATOR%%CMAKE_GEN_SUFFIX%" -H. -B_builds
   - cmake --build _builds --config "%CONFIGURATION%"
 
