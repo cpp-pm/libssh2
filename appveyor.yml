@@ -33,7 +33,7 @@ environment:
 
     - GENERATOR: "Visual Studio 9 2008"
 
-platforms:
+platform:
   - x86
   - x64
 
