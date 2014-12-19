@@ -49,3 +49,6 @@ build_script:
 test_script:
   - ps: cd _builds
 #  - ctest -VV -C "%CONFIGURATION%"
+
+artifacts:
+  - path: **\*.log
