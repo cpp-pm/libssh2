@@ -51,4 +51,5 @@ test_script:
 #  - ctest -VV -C "%CONFIGURATION%"
 
 artifacts:
+
   - path: **\*.log
