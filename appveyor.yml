@@ -27,54 +27,27 @@ environment:
   matrix:
     - GENERATOR: "Visual Studio 12"
       BUILD_SHARED_LIBS: ON
-      ENABLE_ZLIB_COMPRESSION: ON
-
-    - GENERATOR: "Visual Studio 12"
-      BUILD_SHARED_LIBS: ON
-      ENABLE_ZLIB_COMPRESSION: OFF
 
     - GENERATOR: "Visual Studio 12"
       BUILD_SHARED_LIBS: OFF
-      ENABLE_ZLIB_COMPRESSION: ON
-
-    - GENERATOR: "Visual Studio 12"
-      BUILD_SHARED_LIBS: OFF
-      ENABLE_ZLIB_COMPRESSION: OFF
 
     - GENERATOR: "Visual Studio 11"
-      BUILD_SHARED_LIBS: ON
-      ENABLE_ZLIB_COMPRESSION: ON
 
-    - GENERATOR: "Visual Studio 11"
-      BUILD_SHARED_LIBS: ON
-      ENABLE_ZLIB_COMPRESSION: OFF
+    - GENERATOR: "Visual Studio 10"
 
-    - GENERATOR: "Visual Studio 11"
-      BUILD_SHARED_LIBS: OFF
-      ENABLE_ZLIB_COMPRESSION: ON
-
-    - GENERATOR: "Visual Studio 11"
-      BUILD_SHARED_LIBS: OFF
-      ENABLE_ZLIB_COMPRESSION: OFF
-
-#    - GENERATOR: "Visual Studio 10"
-
-#    - GENERATOR: "Visual Studio 9 2008"
+    - GENERATOR: "Visual Studio 9 2008"
 
 platform:
   - x86
   - x64
 
-configuration:
-  - Debug
-  - Release
-
-install:
-  - nuget install zlib
+# configuration:
+#   - Debug
+#   - Release
 
 build_script:
   - ps: if($env:PLATFORM -eq "x64") { $env:CMAKE_GEN_SUFFIX=" Win64" }
-  - cmake "-G%GENERATOR%%CMAKE_GEN_SUFFIX%" -DBUILD_SHARED_LIBS=%BUILD_SHARED_LIBS% -DENABLE_ZLIB_COMPRESSION=%ENABLE_ZLIB_COMPRESSION% -H. -B_builds
+  - cmake "-G%GENERATOR%%CMAKE_GEN_SUFFIX%" -DBUILD_SHARED_LIBS=%BUILD_SHARED_LIBS% -H. -B_builds
   - cmake --build _builds --config "%CONFIGURATION%"
 
 test_script:
