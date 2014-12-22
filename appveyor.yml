@@ -26,8 +26,16 @@
 environment:
   matrix:
     - GENERATOR: "Visual Studio 12"
+      BUILD_SHARED_LIBS: ON
+
+    - GENERATOR: "Visual Studio 12"
+      BUILD_SHARED_LIBS: OFF
 
     - GENERATOR: "Visual Studio 11"
+      BUILD_SHARED_LIBS: ON
+
+    - GENERATOR: "Visual Studio 11"
+      BUILD_SHARED_LIBS: OFF
 
 #    - GENERATOR: "Visual Studio 10"
 
@@ -46,7 +54,7 @@ install:
 
 build_script:
   - ps: if($env:PLATFORM -eq "x64") { $env:CMAKE_GEN_SUFFIX=" Win64" }
-  - cmake "-G%GENERATOR%%CMAKE_GEN_SUFFIX%" -H. -B_builds
+  - cmake "-G%GENERATOR%%CMAKE_GEN_SUFFIX%" -DBUILD_SHARED_LIBS=%BUILD_SHARED_LIBS% -H. -B_builds
   - cmake --build _builds --config "%CONFIGURATION%"
 
 test_script:
