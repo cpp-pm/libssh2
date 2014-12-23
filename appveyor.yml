@@ -47,13 +47,13 @@ platform:
 
 build_script:
   - ps: if($env:PLATFORM -eq "x64") { $env:CMAKE_GEN_SUFFIX=" Win64" }
-  - cmake "-G%GENERATOR%%CMAKE_GEN_SUFFIX%" -DBUILD_SHARED_LIBS=%BUILD_SHARED_LIBS% -H. -B_builds
+  - cmake "-G%GENERATOR%%CMAKE_GEN_SUFFIX%" -DBUILD_SHARED_LIBS=%BUILD_SHARED_LIBS% -H. -B_builds --debug-output --debug-trycompile
   - cmake --build _builds --config "%CONFIGURATION%"
 
 test_script:
   - ps: cd _builds
-  - ctest -VV -C "%CONFIGURATION%"
+  - ctest -VV -C "%CONFIGURATION%" --output-on-failure
 
 on_failure:
-  - ps: cat "C:/projects/libssh2/_builds/CMakeFiles/CMakeOutput.log"
-  - ps: cat "C:/projects/libssh2/_builds/CMakeFiles/CMakeError.log"
+  - ps: cat _builds/CMakeFiles/CMakeOutput.log
+  - ps: cat _builds/CMakeFiles/CMakeError.log
