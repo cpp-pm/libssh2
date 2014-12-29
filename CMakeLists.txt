@@ -41,6 +41,14 @@ project(libssh2 C)
 set(PROJECT_URL "http://www.libssh2.org/")
 set(PROJECT_DESCRIPTION "Library for SSH-based communication")
 
+option(HUNTER_ENABLED "Enable Hunter package manager support" OFF)
+
+include(HunterGate)
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.7.3.tar.gz"
+    SHA1 "ff6aaa393d32db13e353e4452fb679fc26e15efb"
+)
+
 option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 
 # Parse version
