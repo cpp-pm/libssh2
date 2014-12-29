@@ -70,7 +70,7 @@ if(CRYPTO_BACKEND STREQUAL "OpenSSL" OR NOT CRYPTO_BACKEND)
 
     if (WIN32)
       find_file(DLL_LIBEAY32
-	NAMES libeay32.dll crypto.dll
+        NAMES libeay32.dll crypto.dll
         HINTS ${_OPENSSL_ROOT_HINTS} PATHS ${_OPENSSL_ROOT_PATHS}
         PATH_SUFFIXES bin)
       if (NOT DLL_LIBEAY32)
