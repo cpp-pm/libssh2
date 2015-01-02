@@ -1,4 +1,5 @@
 # Copyright (c) 2014 Alexander Lamaison <alexander.lamaison@gmail.com>
+# Copyright (c) 2014 Ruslan Baratov <ruslan_baratov@yahoo.com>
 #
 # Redistribution and use in source and binary forms,
 # with or without modification, are permitted provided
@@ -33,43 +34,72 @@
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 # OF SUCH DAMAGE.
 
-language: c
 
-compiler:
-  - gcc
-  - clang
+# Mac OS X (https://github.com/travis-ci-tester/toolchain-table)
+
+language:
+    - objective-c
 
 env:
-  matrix:
-   - ADDRESS_SIZE=64 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=OFF
-   - ADDRESS_SIZE=64 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=OFF
-   - ADDRESS_SIZE=64 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=ON
-   - ADDRESS_SIZE=64 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=ON
-   - ADDRESS_SIZE=64 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=OFF
-   - ADDRESS_SIZE=64 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=OFF
-   - ADDRESS_SIZE=64 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=ON
-   - ADDRESS_SIZE=64 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=ON
-   - ADDRESS_SIZE=32 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=OFF
-   - ADDRESS_SIZE=32 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=OFF
-   - ADDRESS_SIZE=32 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=ON
-   - ADDRESS_SIZE=32 CRYPTO_BACKEND=OpenSSL BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=ON
-   - ADDRESS_SIZE=32 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=OFF
-   - ADDRESS_SIZE=32 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=OFF
-   - ADDRESS_SIZE=32 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=OFF ENABLE_ZLIB_COMPRESSION=ON
-   - ADDRESS_SIZE=32 CRYPTO_BACKEND=Libgcrypt BUILD_SHARED_LIBS=ON ENABLE_ZLIB_COMPRESSION=ON
-
-before_install:
-  - sudo add-apt-repository --yes ppa:kalakris/cmake
-  - sudo apt-get update
-  - sudo apt-get -y install cmake
-  - if [ $ADDRESS_SIZE = '64' ]; then sudo apt-get install -y libgcrypt11-dev libssl-dev zlib1g-dev; fi
-  - if [ $ADDRESS_SIZE = '32' ]; then sudo apt-get install -y linux-libc-dev linux-libc-dev:i386; fi
-  - if [ $ADDRESS_SIZE = '32' ]; then sudo apt-get install -y gcc-multilib libgcrypt11-dev:i386 libssl-dev:i386 zlib1g-dev:i386; fi
-  - if [ $ADDRESS_SIZE = '32' ]; then export TOOLCHAIN_OPTION="-DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-Linux-32.cmake"; fi
+    - TOOLCHAIN=default TEST="--test" CONFIG=Release ENABLE_ZLIB_COMPRESSION=ON
+    - TOOLCHAIN=default TEST="--test" CONFIG=Debug ENABLE_ZLIB_COMPRESSION=ON
+    - TOOLCHAIN=libcxx TEST="--test" CONFIG=Release ENABLE_ZLIB_COMPRESSION=ON
+    - TOOLCHAIN=libcxx TEST="--test" CONFIG=Debug ENABLE_ZLIB_COMPRESSION=ON
+    - TOOLCHAIN=clang-libstdcxx TEST="--test" CONFIG=Release ENABLE_ZLIB_COMPRESSION=ON
+    - TOOLCHAIN=clang-libstdcxx TEST="--test" CONFIG=Debug ENABLE_ZLIB_COMPRESSION=ON
+    - TOOLCHAIN=xcode TEST="--test" CONFIG=Release ENABLE_ZLIB_COMPRESSION=ON
+    - TOOLCHAIN=xcode TEST="--test" CONFIG=Debug ENABLE_ZLIB_COMPRESSION=ON
+    - TOOLCHAIN=gcc TEST="--test" CONFIG=Release ENABLE_ZLIB_COMPRESSION=ON
+    - TOOLCHAIN=gcc TEST="--test" CONFIG=Debug ENABLE_ZLIB_COMPRESSION=ON
+    - TOOLCHAIN=ios-nocodesign EXTRA="--iossim" CONFIG=Release ENABLE_ZLIB_COMPRESSION=ON
+    - TOOLCHAIN=ios-nocodesign EXTRA="--iossim" CONFIG=Debug ENABLE_ZLIB_COMPRESSION=ON
+        # Extra cmake modules needed for iOS testing:
+        # * https://github.com/ruslo/sugar/tree/master/cmake/core#sugar_add_ios_gtest
+    - TOOLCHAIN=analyze TEST="--test" CONFIG=Release ENABLE_ZLIB_COMPRESSION=ON
+    - TOOLCHAIN=analyze TEST="--test" CONFIG=Debug ENABLE_ZLIB_COMPRESSION=ON
+    - TOOLCHAIN=default TEST="--test" CONFIG=Release ENABLE_ZLIB_COMPRESSION=OFF
+    - TOOLCHAIN=default TEST="--test" CONFIG=Debug ENABLE_ZLIB_COMPRESSION=OFF
+    - TOOLCHAIN=libcxx TEST="--test" CONFIG=Release ENABLE_ZLIB_COMPRESSION=OFF
+    - TOOLCHAIN=libcxx TEST="--test" CONFIG=Debug ENABLE_ZLIB_COMPRESSION=OFF
+    - TOOLCHAIN=clang-libstdcxx TEST="--test" CONFIG=Release ENABLE_ZLIB_COMPRESSION=OFF
+    - TOOLCHAIN=clang-libstdcxx TEST="--test" CONFIG=Debug ENABLE_ZLIB_COMPRESSION=OFF
+    - TOOLCHAIN=xcode TEST="--test" CONFIG=Release ENABLE_ZLIB_COMPRESSION=OFF
+    - TOOLCHAIN=xcode TEST="--test" CONFIG=Debug ENABLE_ZLIB_COMPRESSION=OFF
+    - TOOLCHAIN=gcc TEST="--test" CONFIG=Release ENABLE_ZLIB_COMPRESSION=OFF
+    - TOOLCHAIN=gcc TEST="--test" CONFIG=Debug ENABLE_ZLIB_COMPRESSION=OFF
+    - TOOLCHAIN=ios-nocodesign EXTRA="--iossim" CONFIG=Release ENABLE_ZLIB_COMPRESSION=OFF
+    - TOOLCHAIN=ios-nocodesign EXTRA="--iossim" CONFIG=Debug ENABLE_ZLIB_COMPRESSION=OFF
+        # Extra cmake modules needed for iOS testing:
+        # * https://github.com/ruslo/sugar/tree/master/cmake/core#sugar_add_ios_gtest
+    - TOOLCHAIN=analyze TEST="--test" CONFIG=Release ENABLE_ZLIB_COMPRESSION=OFF
+    - TOOLCHAIN=analyze TEST="--test" CONFIG=Debug ENABLE_ZLIB_COMPRESSION=OFF
 
 install:
-  - mkdir bin
-  - cd bin
+    - brew install cmake
+    - brew install python3
+    # install cmake toolchains and script
+    - POLLY_VERSION="0.6.2"
+    - wget "https://github.com/ruslo/polly/archive/v${POLLY_VERSION}.tar.gz"
+    - tar xf "v${POLLY_VERSION}.tar.gz"
+    - export PATH="`pwd`/polly-${POLLY_VERSION}/bin:${PATH}"
+    # -- end
+    # install cmake
+    - CMAKE_VERSION="3.1.0-rc2-ruslo"
+    - wget "https://github.com/ruslo/CMake/archive/v${CMAKE_VERSION}.tar.gz"
+    - openssl sha1 "v${CMAKE_VERSION}.tar.gz"
+    - tar xf "v${CMAKE_VERSION}.tar.gz"
+    - cd "CMake-${CMAKE_VERSION}"
+    -   build.py --install --toolchain default --config Release --fwd "CMAKE_USE_SYSTEM_CURL=YES"
+    -   export PATH="`pwd`/_install/default/bin:${PATH}"
+    - cd ..
+    # -- end
+    # verify installed cmake
+    - which cmake
+    - cmake --version
+    # -- end
 
 script:
-  - cmake $TOOLCHAIN_OPTION -DCRYPTO_BACKEND=$CRYPTO_BACKEND -DBUILD_SHARED_LIBS=$BUILD_SHARED_LIBS -DENABLE_ZLIB_COMPRESSION=$ENABLE_ZLIB_COMPRESSION .. && cmake --build . && CTEST_OUTPUT_ON_FAILURE=1 cmake --build . --target test && cmake --build . --target package
+    # TODO ADDRESS_SIZE=64/32
+    # TODO BUILD_SHARED_LIBS=ON/OFF
+    # TODO CRYPTO_BACKEND=Libgcrypt
+    - build.py --toolchain ${TOOLCHAIN} --config ${CONFIG} --verbose --fwd CRYPTO_BACKEND=OpenSSL ENABLE_ZLIB_COMPRESSION=${ENABLE_ZLIB_COMPRESSION} HUNTER_ENABLED=ON HUNTER_SKIP_TOOLCHAIN_VERIFICATION=ON ${TEST} ${EXTRA}
