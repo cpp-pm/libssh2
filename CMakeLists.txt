@@ -1,4 +1,5 @@
 # Copyright (c) 2014, 2015  Alexander Lamaison <alexander.lamaison@gmail.com>
+# Copyright (c) 2014 Ruslan Baratov <ruslan_baratov@yahoo.com>
 #
 # Redistribution and use in source and binary forms,
 # with or without modification, are permitted provided
@@ -41,13 +42,13 @@ project(libssh2 C)
 set(PROJECT_URL "https://www.libssh2.org/")
 set(PROJECT_DESCRIPTION "The SSH library")
 
-if (CMAKE_VERSION VERSION_LESS "3.1")
-  if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
-    set (CMAKE_C_FLAGS "--std=gnu90 ${CMAKE_C_FLAGS}")
-  endif()
-else()
-  set (CMAKE_C_STANDARD 90)
-endif()
+option(HUNTER_ENABLED "Enable Hunter package manager support" OFF)
+
+include(HunterGate)
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.7.4.tar.gz"
+    SHA1 "083d713faf88a028e01cd2b9cc87e68429c5f9fd"
+)
 
 option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 

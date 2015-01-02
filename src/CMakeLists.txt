@@ -54,12 +54,12 @@ or empty to try any available")
 # If the crypto backend was given, rather than searching for the first
 # we are able to find, the find_package commands must abort configuration
 # and report to the user.
-if(CRYPTO_BACKEND)
+if(CRYPTO_BACKEND OR HUNTER_ENABLED)
   set(SPECIFIC_CRYPTO_REQUIREMENT REQUIRED)
 endif()
 
 if(CRYPTO_BACKEND STREQUAL "OpenSSL" OR NOT CRYPTO_BACKEND)
-
+  hunter_add_package(OpenSSL)
   find_package(OpenSSL ${SPECIFIC_CRYPTO_REQUIREMENT})
 
   if(OPENSSL_FOUND)
@@ -108,7 +108,9 @@ if(CRYPTO_BACKEND STREQUAL "OpenSSL" OR NOT CRYPTO_BACKEND)
 endif()
 
 if(CRYPTO_BACKEND STREQUAL "Libgcrypt" OR NOT CRYPTO_BACKEND)
-
+  if(HUNTER_ENABLED)
+    message(FATAL_ERROR "FIXME: https://github.com/ruslo/hunter/issues/49")
+  endif()
   find_package(Libgcrypt ${SPECIFIC_CRYPTO_REQUIREMENT})
 
   if(LIBGCRYPT_FOUND)
@@ -239,6 +241,7 @@ option(ENABLE_ZLIB_COMPRESSION "Use zlib for compression")
 add_feature_info(Compression ENABLE_ZLIB_COMPRESSION
   "using zlib for compression")
 if(ENABLE_ZLIB_COMPRESSION)
+  hunter_add_package(ZLIB)
   find_package(ZLIB REQUIRED)
 
   target_include_directories(libssh2 PRIVATE ${ZLIB_INCLUDE_DIRS})
