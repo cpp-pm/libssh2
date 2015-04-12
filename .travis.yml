@@ -84,7 +84,7 @@ install:
     - export PATH="`pwd`/polly-${POLLY_VERSION}/bin:${PATH}"
     # -- end
     # install cmake
-    - CMAKE_VERSION="3.1.0-rc2-ruslo"
+    - CMAKE_VERSION="3.2.1-ruslo"
     - wget "https://github.com/ruslo/CMake/archive/v${CMAKE_VERSION}.tar.gz"
     - openssl sha1 "v${CMAKE_VERSION}.tar.gz"
     - tar xf "v${CMAKE_VERSION}.tar.gz"
@@ -102,4 +102,4 @@ script:
     # TODO ADDRESS_SIZE=64/32
     # TODO BUILD_SHARED_LIBS=ON/OFF
     # TODO CRYPTO_BACKEND=Libgcrypt
-    - build.py --toolchain ${TOOLCHAIN} --config ${CONFIG} --verbose --fwd CRYPTO_BACKEND=OpenSSL ENABLE_ZLIB_COMPRESSION=${ENABLE_ZLIB_COMPRESSION} HUNTER_ENABLED=ON HUNTER_SKIP_TOOLCHAIN_VERIFICATION=ON ${TEST} ${EXTRA}
+    - build.py --toolchain ${TOOLCHAIN} --config ${CONFIG} --verbose --fwd CRYPTO_BACKEND=OpenSSL ENABLE_ZLIB_COMPRESSION=${ENABLE_ZLIB_COMPRESSION} HUNTER_ENABLED=ON HUNTER_RUN_INSTALL=ON ${TEST} ${EXTRA}
