@@ -38,17 +38,17 @@ cmake_minimum_required(VERSION 2.8.11)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+include(HunterGate)
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.8.1.tar.gz"
+    SHA1 "a9bd96ab113f3af870b13cd05cf4e75b8848cf4a"
+)
+
 project(libssh2 C)
 set(PROJECT_URL "http://www.libssh2.org/")
 set(PROJECT_DESCRIPTION "Library for SSH-based communication")
 
 option(HUNTER_ENABLED "Enable Hunter package manager support" OFF)
-
-include(HunterGate)
-HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.7.4.tar.gz"
-    SHA1 "083d713faf88a028e01cd2b9cc87e68429c5f9fd"
-)
 
 option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 
