@@ -417,8 +417,9 @@ knownhost_check(LIBSSH2_KNOWNHOSTS *hosts,
                        plain input to produce a hash to compare with the
                        stored hash.
                     */
-                    libssh2_hmac_ctx ctx;
                     unsigned char hash[SHA_DIGEST_LENGTH];
+                    libssh2_hmac_ctx ctx;
+                    libssh2_hmac_ctx_init(ctx);
 
                     if(SHA_DIGEST_LENGTH != node->name_len) {
                         /* the name hash length must be the sha1 size or
@@ -1184,8 +1185,8 @@ libssh2_knownhost_writefile(LIBSSH2_KNOWNHOSTS *hosts,
 
     for(node = _libssh2_list_first(&hosts->head);
         node;
-        node= _libssh2_list_next(&node->node) ) {
-        size_t wrote;
+        node = _libssh2_list_next(&node->node)) {
+        size_t wrote = 0;
         size_t nwrote;
         rc = knownhost_writeline(hosts, node, buffer, sizeof(buffer), &wrote,
                                  type);

@@ -34,9 +34,11 @@
 # OF SUCH DAMAGE.
 
 include(CheckFunctionExists)
+include(CheckSymbolExists)
 include(CheckFunctionExistsMayNeedLibrary)
 include(CheckIncludeFiles)
 include(CheckTypeSize)
+include(CheckSymbolExists)
 include(CheckNonblockingSocketSupport)
 include(SocketLibraries)
 
@@ -70,7 +72,7 @@ if(CRYPTO_BACKEND STREQUAL "OpenSSL" OR NOT CRYPTO_BACKEND)
 
     if (WIN32)
       find_file(DLL_LIBEAY32
-        NAMES libeay32.dll crypto.dll
+	NAMES libeay32.dll crypto.dll
         HINTS ${_OPENSSL_ROOT_HINTS} PATHS ${_OPENSSL_ROOT_PATHS}
         PATH_SUFFIXES bin)
       if (NOT DLL_LIBEAY32)
@@ -188,7 +190,7 @@ set(SOURCES
   version.c)
 
 if(WIN32)
-  list(APPEND SOURCES ${CMAKE_SOURCE_DIR}/win32/libssh2.rc)
+  list(APPEND SOURCES ${PROJECT_SOURCE_DIR}/win32/libssh2.rc)
 endif()
 
 add_library(libssh2 ${SOURCES})
@@ -199,7 +201,7 @@ target_compile_definitions(libssh2 PRIVATE ${PRIVATE_COMPILE_DEFINITIONS})
 target_include_directories(libssh2
   PRIVATE ${PRIVATE_INCLUDE_DIRECTORIES}
   PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>)
 
 ## Options
@@ -273,9 +275,21 @@ check_include_files(winsock2.h HAVE_WINSOCK2_H)
 
 check_type_size("long long" LONGLONG)
 
-check_function_exists(gettimeofday HAVE_GETTIMEOFDAY)
-check_function_exists(strtoll HAVE_STRTOLL)
-check_function_exists(snprintf HAVE_SNPRINTF)
+if(HAVE_SYS_TIME_H)
+  check_symbol_exists(gettimeofday sys/time.h HAVE_GETTIMEOFDAY)
+else()
+  check_function_exists(gettimeofday HAVE_GETTIMEOFDAY)
+endif()
+if(HAVE_STDLIB_H)
+  check_symbol_exists(strtoll stdlib.h HAVE_STRTOLL)
+else()
+  check_function_exists(strtoll HAVE_STRTOLL)
+endif()
+if (NOT HAVE_STRTOLL)
+  # Try _strtoi64 if strtoll isn't available
+  check_symbol_exists(_strtoi64 stdlib.h HAVE_STRTOI64)
+endif()
+check_symbol_exists(snprintf stdio.h HAVE_SNPRINTF)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin" OR
    ${CMAKE_SYSTEM_NAME} STREQUAL "Interix")
@@ -305,7 +319,7 @@ check_nonblocking_socket_support()
 set(CMAKE_REQUIRED_LIBRARIES ${SAVE_CMAKE_REQUIRED_LIBRARIES})
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/libssh2_config.h.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/libssh2_config_cmake.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/libssh2_config.h)
 # to find generated header
 target_include_directories(libssh2 PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
@@ -329,9 +343,9 @@ endif()
 ## Installation
 
 install(FILES
-  ${CMAKE_SOURCE_DIR}/include/libssh2.h
-  ${CMAKE_SOURCE_DIR}/include/libssh2_publickey.h
-  ${CMAKE_SOURCE_DIR}/include/libssh2_sftp.h
+  ${PROJECT_SOURCE_DIR}/include/libssh2.h
+  ${PROJECT_SOURCE_DIR}/include/libssh2_publickey.h
+  ${PROJECT_SOURCE_DIR}/include/libssh2_sftp.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 install(TARGETS libssh2

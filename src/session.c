@@ -1,5 +1,5 @@
 /* Copyright (c) 2004-2007 Sara Golemon <sarag@libssh2.org>
- * Copyright (c) 2009-2011 by Daniel Stenberg
+ * Copyright (c) 2009-2015 by Daniel Stenberg
  * Copyright (c) 2010 Simon Josefsson <simon@josefsson.org>
  * All rights reserved.
  *
@@ -601,7 +601,7 @@ int _libssh2_wait_socket(LIBSSH2_SESSION *session, time_t start_time)
         (seconds_to_next == 0 ||
          seconds_to_next > session->api_timeout)) {
         time_t now = time (NULL);
-        elapsed_ms = (long)(1000*difftime(start_time, now));
+        elapsed_ms = (long)(1000*difftime(now, start_time));
         if (elapsed_ms > session->api_timeout) {
             session->err_code = LIBSSH2_ERROR_TIMEOUT;
             return LIBSSH2_ERROR_TIMEOUT;
@@ -687,7 +687,12 @@ session_startup(LIBSSH2_SESSION *session, libssh2_socket_t sock)
 
         if (session->socket_prev_blockstate) {
             /* If in blocking state change to non-blocking */
-            session_nonblock(session->socket_fd, 1);
+            rc = session_nonblock(session->socket_fd, 1);
+            if (rc) {
+                return _libssh2_error(session, rc,
+                                      "Failed changing socket's "
+                                      "blocking state to non-blocking");
+            }
         }
 
         session->startup_state = libssh2_NB_state_created;
@@ -1040,12 +1045,22 @@ session_free(LIBSSH2_SESSION *session)
     _libssh2_debug(session, LIBSSH2_TRACE_TRANS,
          "Extra packets left %d", packets_left);
 
-    if(session->socket_prev_blockstate)
+    if(session->socket_prev_blockstate) {
         /* if the socket was previously blocking, put it back so */
-        session_nonblock(session->socket_fd, 0);
+        rc = session_nonblock(session->socket_fd, 0);
+        if (rc) {
+            _libssh2_debug(session, LIBSSH2_TRACE_TRANS,
+             "unable to reset socket's blocking state");
+        }
+    }
 
     if (session->server_hostkey) {
         LIBSSH2_FREE(session, session->server_hostkey);
+    }
+
+    /* error string */
+    if (session->err_msg && ((session->err_flags & LIBSSH2_ERR_FLAG_DUP) != 0)) {
+        LIBSSH2_FREE(session, (char *)session->err_msg);
     }
 
     LIBSSH2_FREE(session, session);
@@ -1275,7 +1290,24 @@ libssh2_session_last_errno(LIBSSH2_SESSION * session)
     return session->err_code;
 }
 
-/* libssh2_session_flag
+/* libssh2_session_set_last_error
+ *
+ * Sets the internal error code for the session.
+ *
+ * This function is available specifically to be used by high level
+ * language wrappers (i.e. Python or Perl) that may extend the library
+ * features while still relying on its error reporting mechanism.
+ */
+LIBSSH2_API int
+libssh2_session_set_last_error(LIBSSH2_SESSION* session,
+                               int errcode,
+                               const char* errmsg)
+{
+    return _libssh2_error_flags(session, errcode, errmsg,
+                                LIBSSH2_ERR_FLAG_DUP);
+}
+
+/* Libssh2_session_flag
  *
  * Set/Get session flags
  *

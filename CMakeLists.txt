@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Alexander Lamaison <alexander.lamaison@gmail.com>
+# Copyright (c) 2014, 2015 Alexander Lamaison <alexander.lamaison@gmail.com>
 # Copyright (c) 2014 Ruslan Baratov <ruslan_baratov@yahoo.com>
 #
 # Redistribution and use in source and binary forms,
@@ -45,8 +45,8 @@ HunterGate(
 )
 
 project(libssh2 C)
-set(PROJECT_URL "http://www.libssh2.org/")
-set(PROJECT_DESCRIPTION "Library for SSH-based communication")
+set(PROJECT_URL "https://www.libssh2.org/")
+set(PROJECT_DESCRIPTION "The SSH library")
 
 option(HUNTER_ENABLED "Enable Hunter package manager support" OFF)
 
@@ -80,7 +80,7 @@ endif()
 
 include(GNUInstallDirs)
 install(
-  FILES AUTHORS COPYING HACKING README RELEASE-NOTES NEWS
+  FILES docs/AUTHORS COPYING docs/HACKING README RELEASE-NOTES NEWS
   DESTINATION ${CMAKE_INSTALL_DOCDIR})
 
 include(max_warnings)

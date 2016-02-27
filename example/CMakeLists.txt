@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Alexander Lamaison <alexander.lamaison@gmail.com>
+# Copyright (c) 2014, 2015 Alexander Lamaison <alexander.lamaison@gmail.com>
 #
 # Redistribution and use in source and binary forms,
 # with or without modification, are permitted provided
@@ -34,7 +34,6 @@
 # OF SUCH DAMAGE.
 
 include(CheckIncludeFiles)
-include(CheckFunctionExists)
 include(CheckSymbolExists)
 include(CopyRuntimeDependencies)
 include(SocketLibraries)
@@ -88,14 +87,14 @@ check_include_files(arpa/inet.h HAVE_ARPA_INET_H)
 check_include_files(netinet/in.h HAVE_NETINET_IN_H)
 check_include_files(winsock2.h HAVE_WINSOCK2_H)
 
-check_function_exists(strcasecmp HAVE_STRCASECMP)
-check_function_exists(_stricmp HAVE__STRICMP)
-check_function_exists(snprintf HAVE_SNPRINTF)
-check_function_exists(_snprintf HAVE__SNPRINTF)
+check_symbol_exists(strcasecmp strings.h HAVE_STRCASECMP)
+check_symbol_exists(_stricmp string.h HAVE__STRICMP)
+check_symbol_exists(snprintf stdio.h HAVE_SNPRINTF)
+check_symbol_exists(_snprintf stdio.h HAVE__SNPRINTF)
 
 check_symbol_exists(__func__ "" HAVE___FUNC__)
 check_symbol_exists(__FUNCTION__ "" HAVE___FUNCTION__)
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/libssh2_config.h.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/libssh2_config_cmake.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/libssh2_config.h)

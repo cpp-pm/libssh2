@@ -38,12 +38,14 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#ifdef HAVE_GETTIMEOFDAY
 /* diff in ms */
 static long tvdiff(struct timeval newer, struct timeval older)
 {
   return (newer.tv_sec-older.tv_sec)*1000+
       (newer.tv_usec-older.tv_usec)/1000;
 }
+#endif
 
 static int waitsocket(int socket_fd, LIBSSH2_SESSION *session)
 {
@@ -86,16 +88,16 @@ int main(int argc, char *argv[])
     const char *username="username";
     const char *password="password";
     const char *scppath="/tmp/TEST";
-    struct stat fileinfo;
+    libssh2_struct_stat fileinfo;
 #ifdef HAVE_GETTIMEOFDAY
     struct timeval start;
     struct timeval end;
     long time_ms;
 #endif
     int rc;
-    int total = 0;
     int spin = 0;
-    off_t got=0;
+    libssh2_struct_stat_size got = 0;
+    libssh2_struct_stat_size total = 0;
 
 #ifdef WIN32
     WSADATA wsadata;
@@ -205,9 +207,9 @@ int main(int argc, char *argv[])
 #endif
 
     /* Request a file via SCP */
-    fprintf(stderr, "libssh2_scp_recv()!\n");
+    fprintf(stderr, "libssh2_scp_recv2()!\n");
     do {
-        channel = libssh2_scp_recv(session, scppath, &fileinfo);
+        channel = libssh2_scp_recv2(session, scppath, &fileinfo);
 
         if (!channel) {
             if(libssh2_session_last_errno(session) != LIBSSH2_ERROR_EAGAIN) {
@@ -233,7 +235,7 @@ int main(int argc, char *argv[])
             int amount=sizeof(mem);
 
             if ((fileinfo.st_size -got) < amount) {
-                amount = fileinfo.st_size - got;
+                amount = (int)(fileinfo.st_size - got);
             }
 
             /* loop until we block */
@@ -260,10 +262,10 @@ int main(int argc, char *argv[])
     gettimeofday(&end, NULL);
 
     time_ms = tvdiff(end, start);
-    fprintf(stderr, "Got %d bytes in %ld ms = %.1f bytes/sec spin: %d\n", total,
-           time_ms, total/(time_ms/1000.0), spin );
+    fprintf(stderr, "Got " LIBSSH2_STRUCT_STAT_SIZE_FORMAT " bytes in %ld ms = %.1f bytes/sec spin: %d\n", total,
+           time_ms, total/(time_ms/1000.0), spin);
 #else
-    fprintf(stderr, "Got %d bytes spin: %d\n", total, spin);
+    fprintf(stderr, "Got " LIBSSH2_STRUCT_STAT_SIZE_FORMAT " bytes spin: %d\n", total, spin);
 #endif
 
     libssh2_channel_free(channel);
