@@ -40,8 +40,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(HunterGate)
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.8.1.tar.gz"
-    SHA1 "a9bd96ab113f3af870b13cd05cf4e75b8848cf4a"
+    URL "https://github.com/ruslo/hunter/archive/v0.12.50.tar.gz"
+    SHA1 "51b632f2221ae585045add7a9223343ae51ae843"
 )
 
 project(libssh2 C)
