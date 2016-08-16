@@ -1,4 +1,4 @@
-# Copyright (c) 2014, 2015 Alexander Lamaison <alexander.lamaison@gmail.com>
+# Copyright (c) 2014, 2016 Alexander Lamaison <alexander.lamaison@gmail.com>
 # Copyright (c) 2014 Ruslan Baratov <ruslan_baratov@yahoo.com>
 #
 # Redistribution and use in source and binary forms,
@@ -40,8 +40,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(HunterGate)
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.12.50.tar.gz"
-    SHA1 "51b632f2221ae585045add7a9223343ae51ae843"
+    URL "https://github.com/ruslo/hunter/archive/v0.15.16.tar.gz"
+    SHA1 "ca1b3388940bd2ca4452b62a407e6aca743d0ea2"
 )
 
 project(libssh2 C)
