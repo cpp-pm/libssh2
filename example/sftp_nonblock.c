@@ -89,7 +89,6 @@ int main(int argc, char *argv[])
     const char *password = "password";
     const char *sftppath = "/tmp/TEST";
 #ifdef HAVE_GETTIMEOFDAY
-#ifdef HAVE_GETTIMEOFDAY
     struct timeval start;
     struct timeval end;
     long time_ms;
@@ -270,9 +269,6 @@ int main(int argc, char *argv[])
     fprintf(stderr, "Got %d bytes in %ld ms = %.1f bytes/sec spin: %d\n",
             total,
             time_ms, total/(time_ms/1000.0), spin);
-#else
-    fprintf(stderr, "Got %d bytes spin: %d\n", total, spin);
-#endif
 #else
     fprintf(stderr, "Got %d bytes spin: %d\n", total, spin);
 #endif

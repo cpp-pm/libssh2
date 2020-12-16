@@ -90,7 +90,6 @@ int main(int argc, char *argv[])
     const char *scppath = "/tmp/TEST";
     libssh2_struct_stat fileinfo;
 #ifdef HAVE_GETTIMEOFDAY
-#ifdef HAVE_GETTIMEOFDAY
     struct timeval start;
     struct timeval end;
     long time_ms;
@@ -270,9 +269,6 @@ int main(int argc, char *argv[])
             time_ms, total/(time_ms/1000.0), spin);
 #else
     fprintf(stderr, "Got %ld bytes spin: %d\n", (long)total, spin);
-#endif
-#else
-    fprintf(stderr, "Got %d bytes spin: %d\n", total, spin);
 #endif
 
     libssh2_channel_free(channel);

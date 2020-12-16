@@ -6,7 +6,7 @@ set -e
 # Run syntax checks for all manpages in the documentation tree.
 #
 
-srcdir="`cd $(dirname $0);pwd`"
+srcdir=${srcdir:-$PWD}
 dstdir=${builddir:-$PWD}
 mandir=${srcdir}/../docs
 
@@ -23,18 +23,6 @@ ec=0
 trap "rm -f $dstdir/man3" EXIT
 
 ln -sf "$mandir" "$dstdir/man3"
-
-echo MANDIR
-echo $mandir
-echo $mandir/libssh2_*.*
-echo $mandir/libssh2_*
-echo ${mandir}/libssh2_*.*
-echo MANDIR2
-mandir2=docs
-echo $mandir2
-echo $mandir2/libssh2_*.*
-echo $mandir2/libssh2_*
-echo ${mandir2}/libssh2_*.*
 
 for manpage in $mandir/libssh2_*.*; do
   echo "$manpage"

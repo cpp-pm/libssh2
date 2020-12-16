@@ -40,8 +40,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(HunterGate)
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.15.16.tar.gz"
-    SHA1 "ca1b3388940bd2ca4452b62a407e6aca743d0ea2"
+    URL "https://github.com/cpp-pm/hunter/archive/v0.23.288.tar.gz"
+    SHA1 "6c9b2bc606d86ae31f96a62fc68f0a593024815b"
 )
 
 project(libssh2 C)
@@ -49,6 +49,14 @@ set(PROJECT_URL "https://www.libssh2.org/")
 set(PROJECT_DESCRIPTION "The SSH library")
 
 option(HUNTER_ENABLED "Enable Hunter package manager support" OFF)
+
+if (CMAKE_VERSION VERSION_LESS "3.1")
+  if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+    set (CMAKE_C_FLAGS "--std=gnu90 ${CMAKE_C_FLAGS}")
+  endif()
+else()
+  set (CMAKE_C_STANDARD 90)
+endif()
 
 option(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 
