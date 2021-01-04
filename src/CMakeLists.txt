@@ -54,20 +54,19 @@ or empty to try any available")
 # If the crypto backend was given, rather than searching for the first
 # we are able to find, the find_package commands must abort configuration
 # and report to the user.
-if(CRYPTO_BACKEND)
+if(CRYPTO_BACKEND OR HUNTER_ENABLED)
   set(SPECIFIC_CRYPTO_REQUIREMENT REQUIRED)
 endif()
 
 if(CRYPTO_BACKEND STREQUAL "OpenSSL" OR NOT CRYPTO_BACKEND)
-
+  hunter_add_package(OpenSSL)
   find_package(OpenSSL ${SPECIFIC_CRYPTO_REQUIREMENT})
 
   if(OPENSSL_FOUND)
     set(CRYPTO_BACKEND "OpenSSL")
     set(CRYPTO_SOURCES openssl.c openssl.h)
     list(APPEND PRIVATE_COMPILE_DEFINITIONS LIBSSH2_OPENSSL)
-    list(APPEND PRIVATE_INCLUDE_DIRECTORIES ${OPENSSL_INCLUDE_DIR})
-    list(APPEND LIBRARIES ${OPENSSL_LIBRARIES})
+    list(APPEND LIBRARIES OpenSSL::Crypto)
     list(APPEND PC_REQUIRES_PRIVATE libssl libcrypto)
 
     if (WIN32)
@@ -101,14 +100,16 @@ if(CRYPTO_BACKEND STREQUAL "OpenSSL" OR NOT CRYPTO_BACKEND)
 
     # Not all OpenSSL have AES-CTR functions.
     set(SAVE_CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
-    set(CMAKE_REQUIRED_LIBRARIES ${OPENSSL_LIBRARIES})
+    set(CMAKE_REQUIRED_LIBRARIES ${LIBRARIES})
     check_function_exists(EVP_aes_128_ctr HAVE_EVP_AES_128_CTR)
     set(CMAKE_REQUIRED_LIBRARIES ${SAVE_CMAKE_REQUIRED_LIBRARIES})
   endif()
 endif()
 
 if(CRYPTO_BACKEND STREQUAL "Libgcrypt" OR NOT CRYPTO_BACKEND)
-
+  if(HUNTER_ENABLED)
+    message(FATAL_ERROR "FIXME: https://github.com/ruslo/hunter/issues/49")
+  endif()
   find_package(Libgcrypt ${SPECIFIC_CRYPTO_REQUIREMENT})
 
   if(LIBGCRYPT_FOUND)
@@ -239,6 +240,7 @@ option(ENABLE_ZLIB_COMPRESSION "Use zlib for compression")
 add_feature_info(Compression ENABLE_ZLIB_COMPRESSION
   "using zlib for compression")
 if(ENABLE_ZLIB_COMPRESSION)
+  hunter_add_package(ZLIB)
   find_package(ZLIB REQUIRED)
 
   target_include_directories(libssh2 PRIVATE ${ZLIB_INCLUDE_DIRS})
@@ -375,7 +377,7 @@ install(FILES
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 install(TARGETS libssh2
-  EXPORT Libssh2Config
+  EXPORT Libssh2Targets
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -389,10 +391,22 @@ set(RUNTIME_DEPENDENCIES ${_RUNTIME_DEPENDENCIES} CACHE INTERNAL
 
 # Package config
 
+set(CMAKE_CONFIG_INSTALL_DIR "lib/cmake/libssh2")
+
+include(CMakePackageConfigHelpers)
+
 ## During package installation, install Libssh2Config.cmake
-install(EXPORT Libssh2Config
+configure_package_config_file(
+  "${CMAKE_SOURCE_DIR}/cmake/Libssh2Config.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/to-be-installed/Libssh2Config.cmake"
+  INSTALL_DESTINATION "${CMAKE_CONFIG_INSTALL_DIR}")
+install(
+  FILES "${CMAKE_CURRENT_BINARY_DIR}/to-be-installed/Libssh2Config.cmake"
+  DESTINATION "${CMAKE_CONFIG_INSTALL_DIR}")
+## During package installation, install Libssh2Targets.cmake
+install(EXPORT Libssh2Targets
   NAMESPACE Libssh2::
-  DESTINATION lib/cmake/libssh2)
+  DESTINATION "${CMAKE_CONFIG_INSTALL_DIR}")
 
 ## During build, register directly from build tree
 # create Libssh2Config.cmake
@@ -417,11 +431,10 @@ set_target_properties(libssh2 PROPERTIES
   SOVERSION 1
   VERSION 1.0.1)
 
-include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-  ${CMAKE_CURRENT_BINARY_DIR}/Libssh2ConfigVersion.cmake
+  "${CMAKE_CURRENT_BINARY_DIR}/Libssh2ConfigVersion.cmake"
   VERSION "${LIBSSH2_VERSION_MAJOR}.${LIBSSH2_VERSION_MINOR}.${LIBSSH2_VERSION_PATCH}"
   COMPATIBILITY SameMajorVersion)
 install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/Libssh2ConfigVersion.cmake
-  DESTINATION lib/cmake/libssh2)
+  FILES "${CMAKE_CURRENT_BINARY_DIR}/Libssh2ConfigVersion.cmake"
+  DESTINATION "${CMAKE_CONFIG_INSTALL_DIR}")

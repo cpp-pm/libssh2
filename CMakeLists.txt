@@ -1,4 +1,5 @@
 # Copyright (c) 2014, 2015  Alexander Lamaison <alexander.lamaison@gmail.com>
+# Copyright (c) 2014 Ruslan Baratov <ruslan_baratov@yahoo.com>
 #
 # Redistribution and use in source and binary forms,
 # with or without modification, are permitted provided
@@ -37,9 +38,17 @@ cmake_minimum_required(VERSION 2.8.11)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+include(HunterGate)
+HunterGate(
+    URL "https://github.com/cpp-pm/hunter/archive/v0.23.288.tar.gz"
+    SHA1 "6c9b2bc606d86ae31f96a62fc68f0a593024815b"
+)
+
 project(libssh2 C)
 set(PROJECT_URL "https://www.libssh2.org/")
 set(PROJECT_DESCRIPTION "The SSH library")
+
+option(HUNTER_ENABLED "Enable Hunter package manager support" OFF)
 
 if (CMAKE_VERSION VERSION_LESS "3.1")
   if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
